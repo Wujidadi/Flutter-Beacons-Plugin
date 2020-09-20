@@ -3,6 +3,7 @@ package com.umair.beacons_plugin
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.app.PendingIntent
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
@@ -48,7 +49,7 @@ fun isBluetoothEnabled(content: Context) {
 
 
 fun getReadableTime(timestamp: Long): String {
-    val TIME_FORMAT_READABLE = "dd MMMM yyyy hh:mm:ss a"
+    val TIME_FORMAT_READABLE = "yyyy-MM-dd HH:mm:ss"
     if (timestamp != 0L) {
         val date1 = Date(timestamp)
         val outFormat = SimpleDateFormat(TIME_FORMAT_READABLE, Locale.ENGLISH)
@@ -61,10 +62,14 @@ fun Service.createNotification(channelId: String, channelName: String, wakeLockT
     createNotificationChannel(channelId, channelName)
     val imageId = resources.getIdentifier("ic_launcher", "mipmap", packageName)
 
+    val intent = Intent(this, BeaconsPlugin::class.java)
+    val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
     val notification = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(content)
             .setSmallIcon(imageId)
+            .setContentIntent(pendingIntent)
             .setOngoing(true)
             .setWhen(System.currentTimeMillis())
             .setOnlyAlertOnce(true)

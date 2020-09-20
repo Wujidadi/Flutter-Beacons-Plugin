@@ -37,7 +37,7 @@ class BeaconsDiscoveryService : Service() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        createNotification("${TAG}_ID", TAG, "${TAG}::WAKE_LOCK", "Beacons Service", "Looking for nearby beacons")
+        createNotification("${TAG}_ID", TAG, "${TAG}::WAKE_LOCK", "Beacon Scanner", "持續掃描 beacon 中……")
         acquireWakeLock(intent, "${TAG}::WAKE_LOCK")
         return START_STICKY
     }
