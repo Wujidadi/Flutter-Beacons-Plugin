@@ -6,7 +6,6 @@ import android.content.Intent
 import android.util.Log
 import io.flutter.view.FlutterMain
 
-
 class BeaconsBroadcastReceiver : BroadcastReceiver() {
     companion object {
         private const val TAG = "BeaconsBroadcastReceiver"

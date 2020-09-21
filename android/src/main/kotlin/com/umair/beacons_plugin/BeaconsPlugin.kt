@@ -19,14 +19,13 @@ import io.flutter.plugin.platform.PlatformViewsController
 import io.flutter.view.FlutterNativeView
 import timber.log.Timber
 
-
 /** BeaconsPlugin */
 class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermissionsResultListener {
 
     private var context: Context? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        Timber.i("onAttachedToEngine")
+        Timber.i(coloredMessage("onAttachedToEngine", "Teal"))
         messenger = flutterPluginBinding.binaryMessenger
         setUpPluginMethods(flutterPluginBinding.applicationContext, flutterPluginBinding.binaryMessenger)
         context = flutterPluginBinding.applicationContext
@@ -49,7 +48,7 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
 
         @JvmStatic
         fun registerWith(registrar: PluginRegistry.Registrar) {
-            Timber.i("registerWith: registrar")
+            Timber.i(coloredMessage("registerWith: registrar", "Teal"))
             if (beaconHelper == null) {
                 this.beaconHelper = BeaconHelper(registrar.context())
             }
@@ -61,7 +60,7 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
 
         @JvmStatic
         fun registerWith(messenger: BinaryMessenger, context: Context) {
-            Timber.i("registerWith: messenger")
+            Timber.i(coloredMessage("registerWith: messenger", "Teal"))
             if (beaconHelper == null) {
                 this.beaconHelper = BeaconHelper(context)
             }
@@ -72,7 +71,7 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
 
         @JvmStatic
         fun registerWith(messenger: BinaryMessenger, beaconHelper: BeaconHelper, context: Context) {
-            Timber.i("registerWith: messenger background")
+            Timber.i(coloredMessage("registerWith: messenger background", "Teal"))
             this.beaconHelper = beaconHelper
             val instance = BeaconsPlugin()
             requestPermission()
@@ -81,7 +80,7 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
 
         @JvmStatic
         private fun setUpPluginMethods(context: Context, messenger: BinaryMessenger) {
-            Timber.i("setUpPluginMethods")
+            Timber.i(coloredMessage("setUpPluginMethods", "Teal"))
             Timber.plant(Timber.DebugTree())
 
             channel = MethodChannel(messenger, "beacons_plugin")
@@ -91,7 +90,7 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
                     call.method == "startMonitoring" -> {
                         stopService = false
                         callBack?.startScanning()
-                        result.success("Started scanning Beacons.")
+                        result.success(coloredMessage("Started scanning Beacons.", "Teal"))
                     }
                     call.method == "stopMonitoring" -> {
 
@@ -103,7 +102,7 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
                         }
 
                         callBack?.stopMonitoringBeacons()
-                        result.success("Stopped scanning Beacons.")
+                        result.success(coloredMessage("Stopped scanning Beacons.", "Teal"))
                     }
                     call.method == "addRegion" -> {
                         callBack?.addRegion(call, result)
@@ -112,7 +111,7 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
                         call.argument<Boolean>("background")?.let {
                             runInBackground = it
                         }
-                        result.success("App will run in background? $runInBackground")
+                        result.success(coloredMessage("App will run in background? $runInBackground", "Teal"))
                     }
                     else -> result.notImplemented()
                 }
@@ -132,7 +131,7 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
 
         @JvmStatic
         private fun notifyIfPermissionsGranted(context: Context) {
-            Timber.i("notifyIfPermissionsGranted")
+            Timber.i(coloredMessage("notifyIfPermissionsGranted", "Teal"))
             if (permissionsGranted(context)) {
                 doIfPermissionsGranted()
             }
@@ -146,10 +145,10 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
 
         @JvmStatic
         private fun doIfPermissionsGranted() {
-            Timber.i("doIfPermissionsGranted")
+            Timber.i(coloredMessage("doIfPermissionsGranted", "Teal"))
 
             if (beaconHelper == null) {
-                Timber.i(String.format("doIfPermissionsGranted, %s", "Unable to start beacons plugin service."))
+                Timber.i(coloredMessage(String.format("doIfPermissionsGranted, %s", "Unable to start beacons plugin service."), "Teal"))
                 return
             }
 
@@ -159,12 +158,12 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
         @JvmStatic
         private fun requestPermission() {
             if (!arePermissionsGranted()) {
-                Timber.i(String.format("requestPermission, %s", "Requesting location permissions.."))
+                Timber.i(coloredMessage(String.format("requestPermission, %s", "Requesting location permissions.."), "Teal"))
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     currentActivity?.let {
                         ActivityCompat.requestPermissions(it, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_LOCATION_PERMISSIONS)
                     }
-                            ?: Timber.e(String.format("requestPermission, %s", "Unable to request location permissions."))
+                            ?: Timber.e(coloredMessage(String.format("requestPermission, %s", "Unable to request location permissions."), "Teal"))
                 } else {
                     doIfPermissionsGranted()
                 }
@@ -198,12 +197,12 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
         private var callBack: PluginImpl? = null
 
         fun sendBLEScannerReadyCallback() {
-            Timber.i("sendBLEScannerReadyCallback")
+            Timber.i(coloredMessage("sendBLEScannerReadyCallback", "Teal"))
             channel?.invokeMethod("scannerReady", "")
         }
 
         fun startBackgroundService(context: Context) {
-            Timber.i("startBackgroundService")
+            Timber.i(coloredMessage("startBackgroundService", "Teal"))
             if (runInBackground && !stopService) {
                 val serviceIntent1 = Intent(context, BeaconsDiscoveryService::class.java)
                 context.startService(serviceIntent1)
@@ -211,7 +210,7 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
         }
 
         fun stopBackgroundService(context: Context) {
-            Timber.i("stopBackgroundService")
+            Timber.i(coloredMessage("stopBackgroundService", "Teal"))
             if (runInBackground && !stopService) {
                 val serviceIntent = Intent(context, BeaconsDiscoveryService::class.java)
                 context.stopService(serviceIntent)
@@ -220,7 +219,7 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        Timber.i("onDetachedFromEngine")
+        Timber.i(coloredMessage("onDetachedFromEngine", "Teal"))
         currentActivity = null
         channel?.setMethodCallHandler(null)
         event_channel?.setStreamHandler(null)
@@ -236,7 +235,7 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
     }
 
     override fun onAttachedToActivity(activityPluginBinding: ActivityPluginBinding) {
-        Timber.i("onAttachedToActivity")
+        Timber.i(coloredMessage("onAttachedToActivity", "Teal"))
         currentActivity = activityPluginBinding.activity
         activityPluginBinding.addRequestPermissionsResultListener(this)
         requestPermission()
@@ -247,17 +246,17 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        Timber.i("onDetachedFromActivityForConfigChanges")
+        Timber.i(coloredMessage("onDetachedFromActivityForConfigChanges", "Teal"))
     }
 
     override fun onReattachedToActivityForConfigChanges(activityPluginBinding: ActivityPluginBinding) {
-        Timber.i("onReattachedToActivityForConfigChanges")
+        Timber.i(coloredMessage("onReattachedToActivityForConfigChanges", "Teal"))
         currentActivity = activityPluginBinding.activity
         activityPluginBinding.addRequestPermissionsResultListener(this)
     }
 
     override fun onDetachedFromActivity() {
-        Timber.i("onDetachedFromActivity")
+        Timber.i(coloredMessage("onDetachedFromActivity", "Teal"))
         currentActivity = null
 
         context?.let {

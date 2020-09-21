@@ -11,7 +11,6 @@ import io.flutter.plugin.common.MethodChannel
 import org.altbeacon.beacon.*
 import java.util.*
 
-
 open class BeaconHelper(var context: Context) : BeaconConsumer, BeaconsPlugin.Companion.PluginImpl {
 
     override fun getApplicationContext(): Context {
@@ -44,7 +43,7 @@ open class BeaconHelper(var context: Context) : BeaconConsumer, BeaconsPlugin.Co
     }
 
     override fun stopMonitoringBeacons() {
-        Log.i(TAG, "stopMonitoringBeacons")
+        Log.i(TAG, coloredMessage("stopMonitoringBeacons", "Teal"))
 
         beaconManager?.unbind(this)
         eventSink = null
@@ -56,14 +55,14 @@ open class BeaconHelper(var context: Context) : BeaconConsumer, BeaconsPlugin.Co
 
 
     override fun onBeaconServiceConnect() {
-        Log.i(TAG, "onBeaconServiceConnect")
+        Log.i(TAG, coloredMessage("onBeaconServiceConnect", "Teal"))
 
         beaconManager?.removeAllMonitorNotifiers()
 
         beaconManager?.addMonitorNotifier(object : MonitorNotifier {
             override fun didEnterRegion(region: Region) {
                 try {
-                    Log.d(TAG, "didEnterRegion")
+                    Log.d(TAG, coloredMessage("didEnterRegion", "Teal"))
                     beaconManager?.startRangingBeaconsInRegion(region)
                 } catch (e: RemoteException) {
                     e.printStackTrace()
@@ -73,7 +72,7 @@ open class BeaconHelper(var context: Context) : BeaconConsumer, BeaconsPlugin.Co
 
             override fun didExitRegion(region: Region) {
                 try {
-                    Log.d(TAG, "didExitRegion")
+                    Log.d(TAG, coloredMessage("didExitRegion", "Teal"))
                     beaconManager?.stopRangingBeaconsInRegion(region)
                 } catch (e: RemoteException) {
                     e.printStackTrace()
@@ -140,26 +139,26 @@ open class BeaconHelper(var context: Context) : BeaconConsumer, BeaconsPlugin.Co
                 scanTime = getReadableTime(System.currentTimeMillis())
         ).toString()
 
-        //Log.i(TAG, "sendBeaconData: $message")
+        //Log.i(TAG, coloredMessage("sendBeaconData: $message", "Teal"))
 
         eventSink?.success(message)
     }
 
     private fun startMonitoringBeacons(region: Region) {
         try {
-            Log.i(TAG, "startMonitoringBeacons: ${region.uniqueId}")
+            Log.i(TAG, coloredMessage("startMonitoringBeacons: ${region.uniqueId}", "Teal"))
             beaconManager?.startMonitoringBeaconsInRegion(region)
             beaconManager?.startRangingBeaconsInRegion(region)
         } catch (e: RemoteException) {
             e.printStackTrace()
-            Log.e(TAG, e.message)
+            Log.e(TAG, coloredMessage(e.message.toString(), "Teal"))
         }
     }
 
     private fun setUpBeaconManager(context: Context) {
         if (BeaconsPlugin.permissionsGranted(context)) {
 
-            Log.i(TAG, "setUpBeaconManager")
+            Log.i(TAG, coloredMessage("setUpBeaconManager", "Teal"))
             beaconManager = BeaconManager.getInstanceForApplication(context)
             beaconManager?.beaconParsers?.add(BeaconParser().setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"))
             beaconManager?.beaconParsers?.add(BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"))
@@ -167,7 +166,7 @@ open class BeaconHelper(var context: Context) : BeaconConsumer, BeaconsPlugin.Co
             beaconManager?.backgroundScanPeriod = 1100
             beaconManager?.bind(this)
         } else {
-            Log.e(TAG, "Location permissions are needed.")
+            Log.e(TAG, coloredMessage("Location permissions are needed.", "Teal"))
         }
     }
 
@@ -187,8 +186,8 @@ open class BeaconHelper(var context: Context) : BeaconConsumer, BeaconsPlugin.Co
 
         listOfRegions.add(region)
 
-        result.success("Region Added: ${region.uniqueId}, UUID: ${region.id1}")
-        Log.i(TAG, "Region Added: ${region.uniqueId}, UUID: ${region.id1}")
+        result.success(coloredMessage("Region Added: ${region.uniqueId}, UUID: ${region.id1}", "Teal"))
+        Log.i(TAG, coloredMessage("Region Added: ${region.uniqueId}, UUID: ${region.id1}", "Teal"))
     }
 
     override fun startScanning() {
@@ -197,12 +196,12 @@ open class BeaconHelper(var context: Context) : BeaconConsumer, BeaconsPlugin.Co
         setUpBeaconManager(context)
 
         if (listOfRegions.isNotEmpty()) {
-            Log.i(TAG, "Started Monitoring ${listOfRegions.size} regions.")
+            Log.i(TAG, coloredMessage("Started Monitoring ${listOfRegions.size} regions.", "Teal"))
             listOfRegions.forEach {
                 startMonitoringBeacons(it)
             }
         } else {
-            Log.i(TAG, "startScanning: No regions added..")
+            Log.i(TAG, coloredMessage("startScanning: No regions added..", "Teal"))
         }
     }
 }
