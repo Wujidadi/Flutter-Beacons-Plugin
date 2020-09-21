@@ -10,6 +10,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.altbeacon.beacon.*
 import java.util.*
+import com.taras.taras_plugin.coloredMessage
 
 open class BeaconHelper(var context: Context) : BeaconConsumer, BeaconsPlugin.Companion.PluginImpl {
 
@@ -186,7 +187,7 @@ open class BeaconHelper(var context: Context) : BeaconConsumer, BeaconsPlugin.Co
 
         listOfRegions.add(region)
 
-        result.success(coloredMessage("Region Added: ${region.uniqueId}, UUID: ${region.id1}", "Teal"))
+        result.success("Region Added: ${region.uniqueId}, UUID: ${region.id1}")
         Log.i(TAG, coloredMessage("Region Added: ${region.uniqueId}, UUID: ${region.id1}", "Teal"))
     }
 

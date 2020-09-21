@@ -18,6 +18,7 @@ import io.flutter.plugin.common.*
 import io.flutter.plugin.platform.PlatformViewsController
 import io.flutter.view.FlutterNativeView
 import timber.log.Timber
+import com.taras.taras_plugin.coloredMessage
 
 /** BeaconsPlugin */
 class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermissionsResultListener {
@@ -90,7 +91,8 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
                     call.method == "startMonitoring" -> {
                         stopService = false
                         callBack?.startScanning()
-                        result.success(coloredMessage("Started scanning Beacons.", "Teal"))
+                        result.success("Started scanning Beacons.")
+                        Timber.i(coloredMessage("Started scanning Beacons.", "Teal"))
                     }
                     call.method == "stopMonitoring" -> {
 
@@ -102,7 +104,8 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
                         }
 
                         callBack?.stopMonitoringBeacons()
-                        result.success(coloredMessage("Stopped scanning Beacons.", "Teal"))
+                        result.success("Stopped scanning Beacons.")
+                        Timber.i(coloredMessage("Stopped scanning Beacons.", "Teal"))
                     }
                     call.method == "addRegion" -> {
                         callBack?.addRegion(call, result)
@@ -111,7 +114,8 @@ class BeaconsPlugin : FlutterPlugin, ActivityAware, PluginRegistry.RequestPermis
                         call.argument<Boolean>("background")?.let {
                             runInBackground = it
                         }
-                        result.success(coloredMessage("App will run in background? $runInBackground", "Teal"))
+                        result.success("App will run in background? $runInBackground")
+                        Timber.i(coloredMessage("App will run in background? $runInBackground", "Teal"))
                     }
                     else -> result.notImplemented()
                 }

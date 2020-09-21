@@ -18,6 +18,7 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
 }
 
@@ -44,6 +45,7 @@ dependencies {
 
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
     implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.github.Wujidadi:Kotlin-Taras-Plugin:-SNAPSHOT'
 
     //Android Alt-Beacon Library
     implementation 'org.altbeacon:android-beacon-library:2.16.4'

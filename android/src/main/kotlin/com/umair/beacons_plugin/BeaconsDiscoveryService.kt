@@ -6,6 +6,7 @@ import android.os.IBinder
 import android.util.Log
 import java.util.concurrent.atomic.AtomicBoolean
 import timber.log.Timber
+import com.taras.taras_plugin.coloredMessage
 
 class BeaconsDiscoveryService : Service() {
 
@@ -46,7 +47,7 @@ class BeaconsDiscoveryService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.i(coloredMessage("${serviceName} - Lifecyle: Start Command", "Green"))
-        createNotification("${TAG}_ID", TAG, "${TAG}::WAKE_LOCK", "Beacon Scanner", "持續掃描 beacon 中……")
+        // createNotification("${TAG}_ID", TAG, "${TAG}::WAKE_LOCK", "Beacon Scanner", "持續掃描 beacon 中……")
         acquireWakeLock(intent, "${TAG}::WAKE_LOCK")
         return START_STICKY
     }
