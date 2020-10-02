@@ -2,19 +2,21 @@ import Flutter
 import UIKit
 import CoreLocation
 
-public class SwiftBeaconsPlugin: NSObject, FlutterPlugin {
-
+public class SwiftBeaconsPlugin: NSObject, FlutterPlugin
+{
     var eventSink: FlutterEventSink?
     let locationManager = CLLocationManager()
     var runInBackground = false
 
     var listOfRegions = [Item]()
 
-    init(eventSink: FlutterEventSink?) {
+    init(eventSink: FlutterEventSink?)
+    {
         self.eventSink = eventSink
     }
 
-    public static func register(with registrar: FlutterPluginRegistrar) {
+    public static func register(with registrar: FlutterPluginRegistrar)
+    {
         let fChannel = FlutterMethodChannel(name: "beacons_plugin", binaryMessenger: registrar.messenger())
 
         let eventChannel = FlutterEventChannel(name: "beacons_plugin_stream", binaryMessenger: registrar.messenger())
@@ -23,11 +25,13 @@ public class SwiftBeaconsPlugin: NSObject, FlutterPlugin {
         eventChannel.setStreamHandler(eventHandler)
     }
 
-    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-
+    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult)
+    {
         // flutter cmds dispatched on iOS device :
-        if call.method == "addRegionForIOS" {
-            guard let args = call.arguments else {
+        if call.method == "addRegionForIOS"
+        {
+            guard let args = call.arguments else
+            {
                 return
             }
             if let myArgs = args as? [String: Any],
@@ -39,11 +43,16 @@ public class SwiftBeaconsPlugin: NSObject, FlutterPlugin {
                 // addRegion(uuid: uuid, major: major, minor: minor, name: name)
                 addRegion(uuid: uuid, name: name)
                 result("Region Added.")
-            } else {
+            }
+            else
+            {
                 result("iOS could not extract flutter arguments in method: (addRegion)")
             }
-        } else if call.method == "addRegion" {
-            guard let args = call.arguments else {
+        }
+        else if call.method == "addRegion"
+        {
+            guard let args = call.arguments else
+            {
                 return
             }
             if let myArgs = args as? [String: Any],
@@ -53,26 +62,37 @@ public class SwiftBeaconsPlugin: NSObject, FlutterPlugin {
                 // addRegion(uuid: uuid, major: major, minor: minor, name: name)
                 addRegion(uuid: uuid, name: name)
                 result("Region Added.")
-            } else {
+            }
+            else
+            {
                 result("iOS could not extract flutter arguments in method: (addRegion)")
             }
-        } else if call.method == "startMonitoring"{
+        }
+        else if call.method == "startMonitoring"
+        {
             locationManager.delegate = self
             startScanning()
             result("Started scanning Beacons.")
-        }else if call.method == "stopMonitoring"{
+        }
+        else if call.method == "stopMonitoring"
+        {
             stopScanning()
             result("Stopped scanning Beacons.")
-        }else if call.method == "runInBackground"{
+        }
+        else if call.method == "runInBackground"
+        {
             runInBackground = true
             result("App will run in background? \(runInBackground)")
-        }else {
+        }
+        else
+        {
             result("Flutter method not implemented on iOS")
         }
     }
 
     // func addRegion(uuid:String?, major:Int, minor:Int, name:String){
-    func addRegion(uuid:String?, name:String){
+    func addRegion(uuid:String?, name:String)
+    {
         guard let uuid = UUID(uuidString: uuid ?? "") else { return; }
         // let major = major
         // let minor = minor
@@ -83,29 +103,37 @@ public class SwiftBeaconsPlugin: NSObject, FlutterPlugin {
         listOfRegions.append(newItem)
     }
 
-    func startMonitoringItem(_ item: Item) {
+    func startMonitoringItem(_ item: Item)
+    {
         let beaconRegion = item.asBeaconRegion()
         locationManager.startMonitoring(for: beaconRegion)
         locationManager.startRangingBeacons(in: beaconRegion)
     }
 
-    func stopMonitoringItem(_ item: Item) {
+    func stopMonitoringItem(_ item: Item)
+    {
         let beaconRegion = item.asBeaconRegion()
         locationManager.stopMonitoring(for: beaconRegion)
         locationManager.stopRangingBeacons(in: beaconRegion)
     }
 
-    func startScanning() {
-        if (!listOfRegions.isEmpty) {
-            for item in listOfRegions {
+    func startScanning()
+    {
+        if (!listOfRegions.isEmpty)
+        {
+            for item in listOfRegions
+            {
                 startMonitoringItem(item)
             }
         }
     }
 
-    func stopScanning() {
-        if (!listOfRegions.isEmpty) {
-            for item in listOfRegions {
+    func stopScanning()
+    {
+        if (!listOfRegions.isEmpty)
+        {
+            for item in listOfRegions
+            {
                 stopMonitoringItem(item)
             }
         }
@@ -113,65 +141,86 @@ public class SwiftBeaconsPlugin: NSObject, FlutterPlugin {
 }
 
 // MARK: CLLocationManagerDelegate
-extension SwiftBeaconsPlugin: CLLocationManagerDelegate {
-
-    public func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+extension SwiftBeaconsPlugin: CLLocationManagerDelegate
+{
+    public func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion)
+    {
         guard region is CLBeaconRegion else { return }
     }
 
-    public func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+    public func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error)
+    {
         print("Failed monitoring region: \(error.localizedDescription)")
     }
 
-    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error)
+    {
         print("Location manager failed: \(error.localizedDescription)")
     }
 
-    public func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
+    public func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion)
+    {
+        for beacon in beacons
+        {
+            for row in 0..<listOfRegions.count
+            {
+                if listOfRegions[row] == beacon
+                {
+                    listOfRegions[row].beacon = beacon
 
-        for beacon in beacons {
-          for row in 0..<listOfRegions.count {
-            if listOfRegions[row] == beacon {
-                  listOfRegions[row].beacon = beacon
-                  let data = "{\n" +
-                  "  \"name\": \"\(listOfRegions[row].name)\",\n" +
-                  "  \"uuid\": \"\(beacon.proximityUUID)\",\n" +
-                  "  \"major\": \"\(beacon.major)\",\n" +
-                  "  \"minor\": \"\(beacon.minor)\",\n" +
-                  "  \"rssi\": \"\(beacon.rssi)\",\n" +
-                  "  \"distance\": \"\(listOfRegions[row].locationString())\",\n" +
-                  "  \"proximity\": \"\(listOfRegions[row].nameForProximity(beacon.proximity))\"\n" +
-                  "}"
+                    let currentDate = Date()
+                    let dataFormatter = DateFormatter()
+                    dataFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
+                    let scanTime = dataFormatter.string(from: currentDate)
+                    // let scanTime = dataFormatter.string(from: beacon.timestamp)     // available in iOS 13.0 or newer
 
-                  //Send data to flutter
-                  eventSink?("\(data)")
+                    let mac = "\(listOfRegions[row].name)-\(beacon.major)-\(beacon.minor)"
+
+                    let data = "{\n" +
+                    "  \"name\": \"\(listOfRegions[row].name)\",\n" +
+                    "  \"uuid\": \"\(beacon.proximityUUID)\",\n" +
+                    // "  \"uuid\": \"\(beacon.uuid)\",\n" +                           // available in iOS 13.0 or newer
+                    "  \"macAddress\": \"\(mac)\",\n" +
+                    "  \"major\": \"\(beacon.major)\",\n" +
+                    "  \"minor\": \"\(beacon.minor)\",\n" +
+                    "  \"rssi\": \"\(beacon.rssi)\",\n" +
+                    "  \"distance\": \"\(listOfRegions[row].locationString())\",\n" +
+                    "  \"proximity\": \"\(listOfRegions[row].nameForProximity(beacon.proximity))\",\n" +
+                    "  \"scanTime\": \"\(scanTime)\"\n" +
+                    "}"
+
+                    //Send data to flutter
+                    eventSink?("\(data)")
+                }
             }
-          }
         }
     }
 }
 
 
-class EventsStreamHandler: NSObject, FlutterStreamHandler {
-
+class EventsStreamHandler: NSObject, FlutterStreamHandler
+{
     private var eventSink: FlutterEventSink?
 
     private var fChannel:FlutterMethodChannel
     private var fRegistrar: FlutterPluginRegistrar?
 
-    init(channel:FlutterMethodChannel,registrar: FlutterPluginRegistrar) {
+    init(channel:FlutterMethodChannel,registrar: FlutterPluginRegistrar)
+    {
         self.fChannel = channel
         self.fRegistrar = registrar
     }
 
-    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError?
+    {
         eventSink = events
         let instance = SwiftBeaconsPlugin(eventSink: eventSink)
         fRegistrar?.addMethodCallDelegate(instance, channel: fChannel)
         return nil
     }
 
-    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+    public func onCancel(withArguments arguments: Any?) -> FlutterError?
+    {
         eventSink = nil
         return nil
     }
